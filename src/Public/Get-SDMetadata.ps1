@@ -12,9 +12,26 @@ Function Get-SDMetadata {
     }
 
     $resp = Invoke-RestMethod -Uri 'https://api.sherpadesk.com/organizations/' -Method Get -Headers $header
-    $Script:AuthConfig.WorkingOrganization = $resp[0].key
-    $Script:AuthConfig.WorkingInstance = $resp[0].instances[0].key
-    If($PassThru.IsPresent){
+    
+    if ($resp.Count -gt 1) {
+        Write-Host "Multiple organizations found. Please select one:"
+        for ($i = 0; $i -lt $resp.Count; $i++) {
+            Write-Host "$i - $($resp[$i].name)"
+        }
+        $selection = Read-Host "Enter the number corresponding to your choice"
+        if ($selection -match '^\d+$' -and [int]$selection -lt $resp.Count) {
+            $selectedOrg = $resp[$selection]
+        } else {
+            throw "Invalid selection. Please try again."
+        }
+    } else {
+        $selectedOrg = $resp[0]
+    }
+
+    $Script:AuthConfig.WorkingOrganization = $selectedOrg.key
+    $Script:AuthConfig.WorkingInstance = $selectedOrg.instances[0].key
+
+    if ($PassThru.IsPresent) {
         $resp
     }
 }
