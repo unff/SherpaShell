@@ -5,27 +5,33 @@ online version:
 schema: 2.0.0
 ---
 
-# Set-SDTicket
+# Get-SDInvoice
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
-### ByParameter (Default)
+### ByKey (Default)
 ```
-Set-SDTicket [-Status <String>] [-key <String>] [-Organization <String>] [-Instance <String>]
- [-ApiKey <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Get-SDInvoice [-Key <String>] [-Organization <String>] [-Instance <String>] [-ApiKey <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
-### ByBody
+### ByAccount
 ```
-Set-SDTicket [-Body <Hashtable>] [-key <String>] [-Organization <String>] [-Instance <String>]
- [-ApiKey <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Get-SDInvoice [-Account <String>] [-Organization <String>] [-Instance <String>] [-ApiKey <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
+```
+
+### ByContract
+```
+Get-SDInvoice [-Contract <String>] [-Organization <String>] [-Instance <String>] [-ApiKey <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
@@ -38,11 +44,23 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -ApiKey
-Your SherpaDesk API Key. This is passed automatically after:
+### -Account
+{{ Fill Account Description }}
 
-- It is retrieved from the API with Get-SDApiKey.
-- It is retrieved from local storage with Get-SDAuthConfig
+```yaml
+Type: String
+Parameter Sets: ByAccount
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ApiKey
+{{ Fill ApiKey Description }}
 
 ```yaml
 Type: String
@@ -56,12 +74,12 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Body
-{{Fill Body Description}}
+### -Contract
+{{ Fill Contract Description }}
 
 ```yaml
-Type: Hashtable
-Parameter Sets: ByBody
+Type: String
+Parameter Sets: ByContract
 Aliases:
 
 Required: False
@@ -72,14 +90,26 @@ Accept wildcard characters: False
 ```
 
 ### -Instance
-Your SherpaDesk instance. This is passed automatically after:
-
-- It is retrieved from the API with Get-SDMetaData.
-- It is retrieved from local storage with Get-SDAuthConfig
+{{ Fill Instance Description }}
 
 ```yaml
 Type: String
 Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Key
+{{ Fill Key Description }}
+
+```yaml
+Type: String
+Parameter Sets: ByKey
 Aliases:
 
 Required: False
@@ -90,40 +120,7 @@ Accept wildcard characters: False
 ```
 
 ### -Organization
-Your SherpaDesk Organization. This is passed automatically after:
-
-- It is retrieved from the API with Get-SDMetaData.
-- It is retrieved from local storage with Get-SDAuthConfig
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Status
-{{Fill Status Description}}
-
-```yaml
-Type: String
-Parameter Sets: ByParameter
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -key
-{{Fill key Description}}
+{{ Fill Organization Description }}
 
 ```yaml
 Type: String

@@ -13,7 +13,7 @@ Securely stores your authentication information in your user profile.
 ## SYNTAX
 
 ```
-Get-SDAuthConfig
+Get-SDAuthConfig [-Silent] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -29,6 +29,24 @@ PS C:\> Save-SDAuthConfig
 This will store your API key in the default location.
 
 ## PARAMETERS
+
+### -Silent
+{{ Fill Silent Description }}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### CommonParameters
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 

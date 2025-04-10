@@ -5,20 +5,20 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-SDTechs
+# Get-SDConfig
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
 ```
-Get-SDTechs [[-Organization] <String>] [[-Instance] <String>] [[-ApiKey] <String>]
+Get-SDConfig [[-Organization] <String>] [[-Instance] <String>] [[-ApiKey] <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
@@ -32,10 +32,7 @@ PS C:\> {{ Add example code here }}
 ## PARAMETERS
 
 ### -ApiKey
-Your SherpaDesk API Key. This is passed automatically after:
-
-- It is retrieved from the API with Get-SDApiKey.
-- It is retrieved from local storage with Get-SDAuthConfig
+{{ Fill ApiKey Description }}
 
 ```yaml
 Type: String
@@ -50,10 +47,7 @@ Accept wildcard characters: False
 ```
 
 ### -Instance
-Your SherpaDesk instance. This is passed automatically after:
-
-- It is retrieved from the API with Get-SDMetaData.
-- It is retrieved from local storage with Get-SDAuthConfig
+{{ Fill Instance Description }}
 
 ```yaml
 Type: String
@@ -68,10 +62,7 @@ Accept wildcard characters: False
 ```
 
 ### -Organization
-Your SherpaDesk Organization. This is passed automatically after:
-
-- It is retrieved from the API with Get-SDMetaData.
-- It is retrieved from local storage with Get-SDAuthConfig
+{{ Fill Organization Description }}
 
 ```yaml
 Type: String

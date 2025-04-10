@@ -12,9 +12,28 @@ schema: 2.0.0
 
 ## SYNTAX
 
+### ByKey (Default)
 ```
 Get-SDTicket [-Key <String>] [-Organization <String>] [-Instance <String>] [-ApiKey <String>]
- [<CommonParameters>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
+```
+
+### ByPage
+```
+Get-SDTicket [-Page <Int32>] [-Organization <String>] [-Instance <String>] [-ApiKey <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
+```
+
+### ByStatus
+```
+Get-SDTicket [-Status <String>] [-Organization <String>] [-Instance <String>] [-ApiKey <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
+```
+
+### BySearch
+```
+Get-SDTicket [-Search <String>] [-Organization <String>] [-Instance <String>] [-ApiKey <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -72,7 +91,7 @@ The ID of a specific ticket you'd like to retrieve.
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: ByKey
 Aliases:
 
 Required: False
@@ -100,9 +119,68 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Page
+{{ Fill Page Description }}
+
+```yaml
+Type: Int32
+Parameter Sets: ByPage
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ProgressAction
+{{ Fill ProgressAction Description }}
+
+```yaml
+Type: ActionPreference
+Parameter Sets: (All)
+Aliases: proga
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Search
+{{ Fill Search Description }}
+
+```yaml
+Type: String
+Parameter Sets: BySearch
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Status
+{{ Fill Status Description }}
+
+```yaml
+Type: String
+Parameter Sets: ByStatus
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 

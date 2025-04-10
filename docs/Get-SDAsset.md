@@ -1,41 +1,38 @@
 ---
-external help file: PSSherpaDesk-help.xml
-Module Name: PSSherpaDesk
+external help file: SherpaShell-help.xml
+Module Name: SherpaShell
 online version:
 schema: 2.0.0
 ---
 
-# Get-SDTechs
+# Get-SDAsset
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Gets all assets for the selected Organization
 
 ## SYNTAX
 
 ```
-Get-SDTechs [[-Organization] <String>] [[-Instance] <String>] [[-ApiKey] <String>]
+Get-SDAsset [-Key <String>] [-Organization <String>] [-Instance <String>] [-ApiKey <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+You sign in by SD-GetAPIKey -Email <email address>, then run Get_SDMetadata.  If you have more than one org assigned to your login, choose the org you are working with.
+Get-SDAsset currently only can grab all assets.  
 
 ## EXAMPLES
 
-### Example 1
+### Example 1 - Get all Assets for your organization
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Get-SDAsset 
 ```
 
-{{ Add example description here }}
 
 ## PARAMETERS
 
 ### -ApiKey
-Your SherpaDesk API Key. This is passed automatically after:
-
-- It is retrieved from the API with Get-SDApiKey.
-- It is retrieved from local storage with Get-SDAuthConfig
+Optional.  This is stored in a script-level variable after you run Get-SDAPIKey
 
 ```yaml
 Type: String
@@ -43,17 +40,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 2
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Instance
-Your SherpaDesk instance. This is passed automatically after:
-
-- It is retrieved from the API with Get-SDMetaData.
-- It is retrieved from local storage with Get-SDAuthConfig
+Optional.  This is stored in a script-level variable after you run Get-SDMetadata
 
 ```yaml
 Type: String
@@ -61,17 +55,29 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Key
+Deprecated.  New API uses a GET Body that hasn't been coded yet.
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -Organization
-Your SherpaDesk Organization. This is passed automatically after:
-
-- It is retrieved from the API with Get-SDMetaData.
-- It is retrieved from local storage with Get-SDAuthConfig
+Optional.  This is stored in a script-level variable after you run Get-SDMetadata
 
 ```yaml
 Type: String
@@ -79,14 +85,14 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### -ProgressAction
-{{ Fill ProgressAction Description }}
+No progress action until SherpaDesk actually implements their Content-Range header
 
 ```yaml
 Type: ActionPreference

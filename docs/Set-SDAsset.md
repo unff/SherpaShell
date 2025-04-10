@@ -5,27 +5,27 @@ online version:
 schema: 2.0.0
 ---
 
-# Set-SDTicket
+# Set-SDAsset
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+{{ Fill in the Synopsis }}
 
 ## SYNTAX
 
 ### ByParameter (Default)
 ```
-Set-SDTicket [-Status <String>] [-key <String>] [-Organization <String>] [-Instance <String>]
- [-ApiKey <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Set-SDAsset [-Status <String>] [-key <String>] [-Organization <String>] [-Instance <String>] [-ApiKey <String>]
+ [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ### ByBody
 ```
-Set-SDTicket [-Body <Hashtable>] [-key <String>] [-Organization <String>] [-Instance <String>]
+Set-SDAsset [-Body <Hashtable>] [-key <String>] [-Organization <String>] [-Instance <String>]
  [-ApiKey <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+{{ Fill in the Description }}
 
 ## EXAMPLES
 
@@ -39,10 +39,7 @@ PS C:\> {{ Add example code here }}
 ## PARAMETERS
 
 ### -ApiKey
-Your SherpaDesk API Key. This is passed automatically after:
-
-- It is retrieved from the API with Get-SDApiKey.
-- It is retrieved from local storage with Get-SDAuthConfig
+{{ Fill ApiKey Description }}
 
 ```yaml
 Type: String
@@ -57,7 +54,7 @@ Accept wildcard characters: False
 ```
 
 ### -Body
-{{Fill Body Description}}
+{{ Fill Body Description }}
 
 ```yaml
 Type: Hashtable
@@ -72,10 +69,7 @@ Accept wildcard characters: False
 ```
 
 ### -Instance
-Your SherpaDesk instance. This is passed automatically after:
-
-- It is retrieved from the API with Get-SDMetaData.
-- It is retrieved from local storage with Get-SDAuthConfig
+{{ Fill Instance Description }}
 
 ```yaml
 Type: String
@@ -90,10 +84,7 @@ Accept wildcard characters: False
 ```
 
 ### -Organization
-Your SherpaDesk Organization. This is passed automatically after:
-
-- It is retrieved from the API with Get-SDMetaData.
-- It is retrieved from local storage with Get-SDAuthConfig
+{{ Fill Organization Description }}
 
 ```yaml
 Type: String
@@ -108,7 +99,7 @@ Accept wildcard characters: False
 ```
 
 ### -Status
-{{Fill Status Description}}
+{{ Fill Status Description }}
 
 ```yaml
 Type: String
@@ -123,7 +114,7 @@ Accept wildcard characters: False
 ```
 
 ### -key
-{{Fill key Description}}
+{{ Fill key Description }}
 
 ```yaml
 Type: String
