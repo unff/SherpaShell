@@ -31,7 +31,5 @@ Function Get-SDAsset{
     If($PSCmdlet.ParameterSetName -eq 'ByKey'){
         $resource = "$resource/$key"
     }
-
      Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
-
 }
