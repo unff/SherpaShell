@@ -1,9 +1,6 @@
 ﻿Function Get-SDAccount{
     Param(
-        [parameter(
-            ParameterSetName = 'ByKey'
-        )]
-        [string]$Key,
+        [parameter(ParameterSetName = 'ByKey')] [string]$Key,
         [string]$Organization = $authConfig.WorkingOrganization,
         [string]$Instance = $authConfig.WorkingInstance,
         [string]$ApiKey = $authConfig.ApiKey
@@ -17,18 +14,10 @@
     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
 }
 Function Get-SDAPIKey {
-    [cmdletbinding(
-        DefaultParameterSetName = 'EmailOnly'
-    )]
+    [cmdletbinding(DefaultParameterSetName = 'EmailOnly')]
     Param(
-        [Parameter(
-            ParameterSetName = 'EmailOnly'
-        )]
-        [string]$Email,
-        [Parameter(
-            ParameterSetName = 'Credential'
-        )]
-        [pscredential]$Credential,
+        [Parameter(ParameterSetName = 'EmailOnly')] [string]$Email,
+        [Parameter(ParameterSetName = 'Credential')] [pscredential]$Credential,
         [switch]$PassThru
     )
 
@@ -53,6 +42,43 @@ Function Get-SDAPIKey {
         $resp.api_token
     }
 }
+<#
+    $body = @{
+    "search": "", // string (max 255 chars), search assets by any field
+    "filter": "my", // string (max 255 chars), use "my" to show only my owned assets
+    "user_id": 11, // integer, show assets checked out by user with id=11 
+    "owner_id": 12, // integer, show assets owned by user with id=12
+    "account_id": 1, // integer, show assets in account with id=1
+    "location_id": 2, // integer, show assets in location with id=2 and all child locations
+    "is_active": true // boolean, show only active (true) or inactive (false) or all (undefined) assets
+    "status": 6 // integer, show only assets with status id=6,
+    "category_id": 111, // integer, show assets with category_id=111 
+    "type_id": 112, // integer
+    "make_id": 113, // integer
+    "model_id": 114, // integer,
+    "is_with_custom_fields": false// boolean, show custom_fields (true) or no (false) or all assets 
+}
+#>
+
+Function Get-SDAsset{
+    [cmdletbinding()]
+    Param(
+        [parameter(ParameterSetName = 'ByKey')] [string]$Key,
+
+        [string]$Organization = $authConfig.WorkingOrganization,
+        [string]$Instance = $authConfig.WorkingInstance,
+        [string]$ApiKey = $authConfig.ApiKey
+    )
+
+    # Validate the key parameter if provided
+    $resource = 'assets'
+    If($PSCmdlet.ParameterSetName -eq 'ByKey'){
+        $resource = "$resource/$key"
+    }
+
+     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+
+}
 Function Get-SDAuthConfig {
     Param(
         [switch]$Silent
@@ -75,6 +101,45 @@ Function Get-SDAuthConfig {
         }
     }
 }
+Function Get-SDConfig{
+    [cmdletbinding()]
+    Param(
+        [string]$Organization = $authConfig.WorkingOrganization,
+        [string]$Instance = $authConfig.WorkingInstance,
+        [string]$ApiKey = $authConfig.ApiKey
+    )
+
+    # Validate the key parameter if provided
+    $resource = 'config'
+ 
+     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+
+}
+Function Get-SDInvoice{
+    [cmdletbinding(DefaultParameterSetName = 'ByKey')]
+    Param(
+        [parameter(ParameterSetName = 'ByKey')] [string]$Key,
+        [parameter(ParameterSetName = 'ByAccount')] [string]$Account,
+        [parameter(ParameterSetName = 'ByContract')] [string]$Contract,
+
+        [string]$Organization = $authConfig.WorkingOrganization,
+        [string]$Instance = $authConfig.WorkingInstance,
+        [string]$ApiKey = $authConfig.ApiKey
+    )
+
+    # Validate the key parameter if provided
+    $resource = 'invoices'
+    If ($PSCmdlet.ParameterSetName -eq 'ByKey') {
+        $resource = "$resource/$key"
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByAccount') {
+        $resource = "${$resource}?account=${$AccountKey}"
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByContract') {
+        $resource = "${$resource}?contract_id=${$ContractKey}"
+    }
+
+     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+
+}
 Function Get-SDMetadata {
     Param(
         [string]$ApiKey = $AuthConfig.ApiKey,
@@ -89,9 +154,26 @@ Function Get-SDMetadata {
     }
 
     $resp = Invoke-RestMethod -Uri 'https://api.sherpadesk.com/organizations/' -Method Get -Headers $header
-    $Script:AuthConfig.WorkingOrganization = $resp[0].key
-    $Script:AuthConfig.WorkingInstance = $resp[0].instances[0].key
-    If($PassThru.IsPresent){
+    
+    if ($resp.Count -gt 1) {
+        Write-Host "Multiple organizations found. Please select one:"
+        for ($i = 0; $i -lt $resp.Count; $i++) {
+            Write-Host "$i - $($resp[$i].name)"
+        }
+        $selection = Read-Host "Enter the number corresponding to your choice"
+        if ($selection -match '^\d+$' -and [int]$selection -lt $resp.Count) {
+            $selectedOrg = $resp[$selection]
+        } else {
+            throw "Invalid selection. Please try again."
+        }
+    } else {
+        $selectedOrg = $resp[0]
+    }
+
+    $Script:AuthConfig.WorkingOrganization = $selectedOrg.key
+    $Script:AuthConfig.WorkingInstance = $selectedOrg.instances[0].key
+
+    if ($PassThru.IsPresent) {
         $resp
     }
 }
@@ -136,22 +218,31 @@ Function Get-SDTechs {
     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
 }
 Function Get-SDTicket{
-    [cmdletbinding()]
+    [cmdletbinding(DefaultParameterSetName = 'ByKey')]
     Param(
-        [parameter(
-            ParameterSetName = 'ByKey'
-        )]
-        [string]$Key,
+        [parameter(ParameterSetName = 'ByKey')] [string]$Key,
+        [parameter(ParameterSetName = 'ByPage')] [int]$Page,
+        [parameter(ParameterSetName = 'ByStatus')] [string]$Status,
+        [parameter(ParameterSetName = 'BySearch')] [string]$Search,
         [string]$Organization = $authConfig.WorkingOrganization,
         [string]$Instance = $authConfig.WorkingInstance,
         [string]$ApiKey = $authConfig.ApiKey
     )
+
+    # Validate the key parameter if provided
     $resource = 'tickets'
     If($PSCmdlet.ParameterSetName -eq 'ByKey'){
         $resource = "$resource/$key"
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByPage') {
+        $resource = "${resource}?page=${Page}"
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByStatus') {
+        $resource = "${resource}?status=${Status}"
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'BySearch') {
+        $resource = "${resource}?search=${Search}"
     }
 
-    Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+
 }
 Function Get-SDTime {
     [cmdletbinding()]
@@ -199,63 +290,45 @@ Function New-SDTicket {
         DefaultParameterSetName = 'ByParameter'
     )]
     Param(
-        [Parameter(
-            ParameterSetName = 'ByParameter'
-        )]
+        [Parameter(ParameterSetName = 'ByParameter')]
         [string]$Status,
-        [Parameter(
-            ParameterSetName = 'ByParameter'
-        )]
+        [Parameter(ParameterSetName = 'ByParameter')]
         [string]$Subject,
-        [Parameter(
-            ParameterSetName = 'ByParameter'
-        )]
+        [Parameter(ParameterSetName = 'ByParameter')]
         [string]$FirstPost,
-        [Parameter(
-            ParameterSetName = 'ByParameter'
-        )]
+        [Parameter(ParameterSetName = 'ByParameter')]
         [int]$Class,
-        [Parameter(
-            ParameterSetName = 'ByParameter'
-        )]
+        [Parameter(ParameterSetName = 'ByParameter')]
         [int]$Account,
-        [Parameter(
-            ParameterSetName = 'ByParameter'
-        )]
+        [Parameter(ParameterSetName = 'ByParameter')]
         [int]$Location,
-        [Parameter(
-            ParameterSetName = 'ByParameter'
-        )]
+        [Parameter(ParameterSetName = 'ByParameter')]
         [int]$User,
-        [Parameter(
-            ParameterSetName = 'ByParameter'
-        )]
+        [Parameter(ParameterSetName = 'ByParameter')]
         [int]$Tech,
-        [Parameter(
-            ParameterSetName = 'ByBody'
-        )]
+        [Parameter(ParameterSetName = 'ByBody')]
         [hashtable]$Body,
         [string]$Organization = $authConfig.WorkingOrganization,
         [string]$Instance = $authConfig.WorkingInstance,
         [string]$ApiKey = $authConfig.ApiKey
     )
     $NewTicketParams = @{
-        Status = 'status'
-        Subject = 'subject'
+        Status    = 'status'
+        Subject   = 'subject'
         FirstPost = 'initial_post'
-        Class = 'class_id'
-        Account = 'account_id'
-        Location = 'location_id'
-        User = 'user_id'
-        Tech = 'tech_id'
+        Class     = 'class_id'
+        Account   = 'account_id'
+        Location  = 'location_id'
+        User      = 'user_id'
+        Tech      = 'tech_id'
     }
 
     $resource = "tickets"
     
-    If($PSCmdlet.ParameterSetName -eq 'ByParameter'){
+    If ($PSCmdlet.ParameterSetName -eq 'ByParameter') {
         $body = @{}
-        ForEach($param in $NewTicketParams.GetEnumerator()){
-            If($PSBoundParameters.ContainsKey($param.key)){
+        ForEach ($param in $NewTicketParams.GetEnumerator()) {
+            If ($PSBoundParameters.ContainsKey($param.key)) {
                 $body["$($param.value)"] = $PSBoundParameters["$($param.key)"]
             }
         }
@@ -367,18 +440,96 @@ Function Save-SDAuthConfig {
     }
     $encryptedAuth | ConvertTo-Json | Set-Content $dir\credentials.json
 }
-Function Set-SDTicket {
-    [cmdletbinding(
-        DefaultParameterSetName = 'ByParameter'
-    )]
+<#
+    $body = @{
+    "is_bulk: false, // boolean
+    "is_active: true, // boolean
+    "is_force_dublicate: true, // boolean
+    "checkout_id: 1, // integer
+    "owner_id: 12, // integer
+    "account_id: 13, // integer
+    "serial_number: "11", // string (max 50 chars),
+    "category_id: 111, // integer 
+    "type_id: 112, // integer
+    "make_id: 113, // integer
+    "model_id: 114, // integer
+    "unique1_value: "u111", // string (max 100 chars),
+    "unique2_value: "u112", // string (max 100 chars),
+    "unique3_value: "u113", // string (max 100 chars),
+    "unique4_value: "u114", // string (max 100 chars),
+    "unique5_value: "u115", // string (max 100 chars),
+    "unique6_value: "u116", // string (max 100 chars),
+    "unique7_value: "u117", // string (max 100 chars),
+    "unique_motherboard: "m11", // string (max 100 chars),
+    "unique_bios: "b11", // string (max 100 chars),
+    "name: "name11", // string (max 50 chars),
+    "description: "d11", // string (max 250 chars),
+    "note: "my note", // string (max 500 chars),
+    "location_id: 0 // integer,
+    "status_id": 6 // integer, show only assets with status id=6
+    "entered_date": "2017-06-20T13:12:01.3600000" //string, Represent date in iso format 
+    "acquired_date": "2017-06-20T13:12:01.3600000" //string, Represent date in iso format 
+    "po_number: "2345 n/a", // string,
+    "paid_value: "4.80", // string,
+    "funding_source: "test", // string 
+}
+#>
+
+Function Set-SDAsset {
+    [cmdletbinding(DefaultParameterSetName = 'ByParameter')]
     Param(
-        [Parameter(
-            ParameterSetName = 'ByParameter'
-        )]
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Status,
+        [Parameter(ParameterSetName = 'ByBody')] [hashtable]$Body,
+
+        [string]$key,
+        [string]$Organization = $authConfig.WorkingOrganization,
+        [string]$Instance = $authConfig.WorkingInstance,
+        [string]$ApiKey = $authConfig.ApiKey
+    )
+    $resource = "assets/$key"
+    
+    If($PSCmdlet.ParameterSetName -eq 'ByParameter'){
+        $body = @{}
+        $body['status'] = $Status
+    }
+
+    $jsonbody = $body | ConvertTo-Json
+
+    Write-Verbose $jsonbody
+    # not ready yet
+    #Invoke-SherpaDeskAPICall -Method Put -Resource $resource -Organization $Organization -Instance $Instance -ApiKey $ApiKey -Body $jsonbody
+}
+<#
+    $body = @{
+    "status" : "closed",
+    "note_text" : "some note"
+    "level_id" : 3,
+    "project_id": 66,
+    "class_id" : 3
+    "priority_id" : 3
+    "account_id" : 3,
+    "account_location_id" : 0,
+    "is_transfer_user_to_account": "false",
+    "is_waiting_on_response" : "true",
+    "creation_category_id" : 0,
+    "creation_category_name" : "",
+    "customfields_xml" : "<root><field id="4724"><caption>www.sherpadesk.com</caption><value>Yes</value></field></root>",
+    "default_contract_id" : 0,
+    "default_contract_name: "( Not Set )",
+    "location_id" : 0,
+    "submission_category" : "( Not Set )",
+    "tech_id" : 496558,
+    "user_id" : 496558,
+    "board_list_id" : "77b764099b854452bf2e470825442677" // leave empty to not update, or "0" to reset
+}
+#>
+
+Function Set-SDTicket {
+    [cmdletbinding(DefaultParameterSetName = 'ByParameter')]
+    Param(
+        [Parameter(ParameterSetName = 'ByParameter')]
         [string]$Status,
-        [Parameter(
-            ParameterSetName = 'ByBody'
-        )]
+        [Parameter(ParameterSetName = 'ByBody')]
         [hashtable]$Body,
         [string]$key,
         [string]$Organization = $authConfig.WorkingOrganization,
@@ -434,9 +585,42 @@ Function Invoke-SherpaDeskAPICall {
         Accept = 'application/json'
     }
     
-    If($Method -eq 'Get'){
-        Invoke-RestMethod -Method $Method -Uri "$baseUri/$Resource" -Headers $header
-    }ElseIf(@('Post','Put') -contains $Method){
+    If($Method -eq 'Get') {
+        # Start a timer to keep track of calls per second
+        $timer = [Diagnostics.Stopwatch]::StartNew()
+        # Get Page zero
+        # $resp = Invoke-RestMethod -Method $Method -Uri "$baseUri/$Resource" -Headers $header
+        $resp = Invoke-RestMethod -Method $Method -Uri "$baseUri/$Resource" -Headers $header -ContentType 'application/json' -Body $Body
+        # Check if the response has fewer than 25 items, indicating no more pages
+        If ($resp.Count -lt 25){
+            $hasMoreResults = $false # If the response is less than 25 items, there are no more pages
+        } else {
+            $hasMoreResults = $true # If the response is 25 items, there are more pages to fetch
+        }
+        $page = 1   # Set page counter to 1 for the next page
+        
+        while ($hasMoreResults) {
+            Write-Information "total seconds elapsed: $($timer.elapsed.totalseconds) retrieving page ${page}" -InformationAction Continue
+            # Invoke the API call for the next page of results
+            # The page number is passed as a query parameter to the API call
+            $currentPageResults = Invoke-RestMethod -Method $Method -Uri "$baseUri/$resource/?page=$page" -Headers $header
+            # Flatten the results by adding each object from the current page to $resp
+            $currentPageResults | ForEach-Object { $resp += $_ }
+        
+            # Check if the current page has fewer than 25 objects, indicating no more pages
+            if ($currentPageResults.Count -lt 25) {
+                $hasMoreResults = $false
+            } else {
+                $page++ # Increment the page counter to fetch the next page
+            }
+        }
+        Write-Information "finished retrieval. total seconds elapsed: $($timer.elapsed.totalseconds)" -InformationAction Continue
+        $timer.Stop() # Stop the timer
+        # $resp now contains a single array of objects from all pages
+        return $resp
+
+    }
+    ElseIf(@('Post','Put','Delete') -contains $Method) {
         Invoke-RestMethod -Method $Method -Uri "$baseUri/$Resource" -Headers $header -ContentType 'application/json' -Body $Body
     }
 }
