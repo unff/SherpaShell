@@ -8,7 +8,7 @@ Function Get-SDAccount{
 
     $resource = 'accounts'
     If($PSCmdlet.ParameterSetName -eq 'ByKey'){
-        $resource = "$resource/$key"
+        $resource = "$resource/$Key"
     }
 
     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey

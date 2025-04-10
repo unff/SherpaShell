@@ -7,10 +7,10 @@ Function Get-SDAPIKey {
     )
 
     If($PSCmdlet.ParameterSetName -eq 'EmailOnly'){
-        $credential = Get-Credential -UserName $Email -Message 'Retrieving API key from Sherpa Desk'
+        $Credential = Get-Credential -UserName $Email -Message 'Retrieving API key from Sherpa Desk'
     }
 
-    $up = "$($credential.GetNetworkCredential().UserName)`:$($credential.GetNetworkCredential().Password)"
+    $up = "$($Credential.GetNetworkCredential().UserName)`:$($Credential.GetNetworkCredential().Password)"
     $encodedUP = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$up"))
 
     $header = @{
