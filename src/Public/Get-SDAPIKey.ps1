@@ -1,16 +1,8 @@
 Function Get-SDAPIKey {
-    [cmdletbinding(
-        DefaultParameterSetName = 'EmailOnly'
-    )]
+    [cmdletbinding(DefaultParameterSetName = 'EmailOnly')]
     Param(
-        [Parameter(
-            ParameterSetName = 'EmailOnly'
-        )]
-        [string]$Email,
-        [Parameter(
-            ParameterSetName = 'Credential'
-        )]
-        [pscredential]$Credential,
+        [Parameter(ParameterSetName = 'EmailOnly')] [string]$Email,
+        [Parameter(ParameterSetName = 'Credential')] [pscredential]$Credential,
         [switch]$PassThru
     )
 

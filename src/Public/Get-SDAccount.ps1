@@ -1,9 +1,6 @@
 Function Get-SDAccount{
     Param(
-        [parameter(
-            ParameterSetName = 'ByKey'
-        )]
-        [string]$Key,
+        [parameter(ParameterSetName = 'ByKey')] [string]$Key,
         [string]$Organization = $authConfig.WorkingOrganization,
         [string]$Instance = $authConfig.WorkingInstance,
         [string]$ApiKey = $authConfig.ApiKey
