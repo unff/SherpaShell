@@ -16,4 +16,4 @@ if ((Get-Module pester -ListAvailable | Sort-Object version | Select-Object -Las
 Import-Module 'Pester'
 Get-Module 'Pester'
 # Builds the module by invoking psake on the build.psake.ps1 script.
-Invoke-Build "$PSScriptRoot\PSSherpaDesk.build.ps1" -Task $Task
+Invoke-Build "$PSScriptRoot\SherpaShell.build.ps1" -Task $Task
