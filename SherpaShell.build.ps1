@@ -23,8 +23,8 @@ task DocGen {
 
 # playPS: generate Markdown help files for the module from MAML
 task DocBuild {
-    #New-ExternalHelp $docPath -OutputPath "$modulePath\EN-US"
     Update-MarkdownHelp $docPath
+    New-ExternalHelp $docPath -OutputPath "$modulePath\EN-US"
 }
 
 # Generate the psm

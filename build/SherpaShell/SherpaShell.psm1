@@ -1,14 +1,49 @@
 Function Get-SDAccount{
     Param(
-        [parameter(ParameterSetName = 'ByKey')] [string]$Key,
+        [parameter(ParameterSetName = 'ByParameter')] [int]$AccountID,
+        [parameter(ParameterSetName = 'ByParameter')] [switch]$HasStats,
+        [parameter(ParameterSetName = 'ByParameter')] [string]$Note,
+        [parameter(ParameterSetName = 'ByParameter')] [switch]$AssetInfo,
+        [parameter(ParameterSetName = 'ByParameter')] [switch]$LocationInfo,
+        [parameter(ParameterSetName = 'ByParameter')] [switch]$FileInfo,
+        [parameter(ParameterSetName = 'ByParameter')] [switch]$ProjectInfo,
+        [parameter(ParameterSetName = 'ByParameter')] [switch]$UserInfo,
+        [parameter(ParameterSetName = 'All')] [switch]$All,
+
         [string]$Organization = $authConfig.WorkingOrganization,
         [string]$Instance = $authConfig.WorkingInstance,
         [string]$ApiKey = $authConfig.ApiKey
     )
-
+    $accountParams = @{
+        AccountID = "account_id"
+        HasStats = "is_with_statistics"
+        Note = "note"
+        AssetInfo = "is_assets_info"
+        LocationInfo = "is_locations_info"
+        FileInfo = "is_files_info"
+        ProjectInfo = "is_projects_info"
+        UserInfo = "is_users_info"
+    }
+    
     $resource = 'accounts'
-    If($PSCmdlet.ParameterSetName -eq 'ByKey'){
-        $resource = "$resource/$key"
+    If($PSCmdlet.ParameterSetName -eq 'MyAccoun'){
+        $resource = "$resource/$Key"
+    }
+
+    Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+}
+Function Get-SDActivity {
+    [cmdletbinding()]
+    Param(
+        [parameter(ParameterSetName = 'ByUserID')] [string]$UserID,
+
+        [string]$Organization = $authConfig.WorkingOrganization,
+        [string]$Instance = $authConfig.WorkingInstance,
+        [string]$ApiKey = $authConfig.ApiKey
+    )
+    $resource = 'activity'
+    If($PSCmdlet.ParameterSetName -eq 'ByUserID'){
+        $resource = "${resource}?user=${key}"
     }
 
     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
@@ -22,10 +57,10 @@ Function Get-SDAPIKey {
     )
 
     If($PSCmdlet.ParameterSetName -eq 'EmailOnly'){
-        $credential = Get-Credential -UserName $Email -Message 'Retrieving API key from Sherpa Desk'
+        $Credential = Get-Credential -UserName $Email -Message 'Retrieving API key from Sherpa Desk'
     }
 
-    $up = "$($credential.GetNetworkCredential().UserName)`:$($credential.GetNetworkCredential().Password)"
+    $up = "$($Credential.GetNetworkCredential().UserName)`:$($Credential.GetNetworkCredential().Password)"
     $encodedUP = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$up"))
 
     $header = @{
@@ -42,42 +77,178 @@ Function Get-SDAPIKey {
         $resp.api_token
     }
 }
-<#
-    $body = @{
-    "search": "", // string (max 255 chars), search assets by any field
-    "filter": "my", // string (max 255 chars), use "my" to show only my owned assets
-    "user_id": 11, // integer, show assets checked out by user with id=11 
-    "owner_id": 12, // integer, show assets owned by user with id=12
-    "account_id": 1, // integer, show assets in account with id=1
-    "location_id": 2, // integer, show assets in location with id=2 and all child locations
-    "is_active": true // boolean, show only active (true) or inactive (false) or all (undefined) assets
-    "status": 6 // integer, show only assets with status id=6,
-    "category_id": 111, // integer, show assets with category_id=111 
-    "type_id": 112, // integer
-    "make_id": 113, // integer
-    "model_id": 114, // integer,
-    "is_with_custom_fields": false// boolean, show custom_fields (true) or no (false) or all assets 
-}
-#>
-
-Function Get-SDAsset{
+Function Get-SDArticle {
     [cmdletbinding()]
     Param(
-        [parameter(ParameterSetName = 'ByKey')] [string]$Key,
+        [parameter(ParameterSetName = 'BySearch')] [string]$Search,
 
         [string]$Organization = $authConfig.WorkingOrganization,
         [string]$Instance = $authConfig.WorkingInstance,
         [string]$ApiKey = $authConfig.ApiKey
     )
+    $resource = 'article'
+    If($PSCmdlet.ParameterSetName -eq 'BySearch'){
+        $resource = "${resource}?search=${key}"
+    }
 
-    # Validate the key parameter if provided
+    Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+}
+Function Get-SDAsset{
+    [cmdletbinding(DefaultParameterSetName = 'All')]
+    Param(
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Search, # string (max 255 chars), search assets by any field
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Filter, # string (max 255 chars), use 'my' to show only my owned assets
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$UserId, # integer, show assets checked out by user with id=11 
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$OwnerId, # integer, show assets owned by user with id=12
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$AccountId, # integer, show assets in account with id=1
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$LocationId, # integer, show assets in location with id=2 and all child locations
+        [Parameter(ParameterSetName = 'ByParameter')] [switch]$IsActive, # boolean, show only active (true) or inactive (false) or all (undefined) assets
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$Status, # integer, show only assets with status id=6,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$CategoryId, # integer, show assets with categoryId=111 
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$TypeId, # integer
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$MakeId, # integer
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$ModelId, # integer,
+        [Parameter(ParameterSetName = 'ByParameter')] [switch]$ShowCustomFields, # boolean, show custom_fields (true) or no (false) or all assets 
+        [Parameter(ParameterSetName = 'ByBody')] [hashtable]$Body, # pre-defined body to send to the API.
+        [Parameter(ParameterSetName = 'ByPage')] [int]$Page, # pre-defined body to send to the API.
+        [parameter(ParameterSetName = 'All')] [switch]$All, # Get all assets. Value is ignored. This is the default if no other params are sent.
+
+        [string]$Organization = $authConfig.WorkingOrganization,
+        [string]$Instance = $authConfig.WorkingInstance,
+        [string]$ApiKey = $authConfig.ApiKey
+    )
+    $AssetParams = @{
+        Search	    = 'search'
+        Filter	    = 'filter'
+        UserId	    = 'user_id'
+        OwnerId	    = 'owner_id'
+        AccountId	= 'account_id'
+        LocationId	= 'location_id'
+        IsActive	= 'is_active'
+        Status	    = 'status'
+        CategoryId	= 'category_id'
+        TypeId	    = 'type_id'
+        MakeId	    = 'make_id'
+        ModelId	    = 'model_id'
+        ShowCustomFields = 'is_with_custom_fields'
+    }
+
+    # Parse the parameters if provided.  The API docs lied, and none of the body parameters actually work.  You just get it all.
     $resource = 'assets'
-    If($PSCmdlet.ParameterSetName -eq 'ByKey'){
-        $resource = "$resource/$key"
+
+    
+    If ($PSCmdlet.ParameterSetName -eq 'ByParameter') {
+        $resource += "?"
+        ForEach ($param in $AssetParams.GetEnumerator()) { 
+            If ($PSBoundParameters.ContainsKey($param.key)) {
+                If ($($PSBoundParameters["$($param.key)"]).IsPresent) {
+                    $resource += "$($param.value)=$($PSBoundParameters["$($param.key)"].IsPresent)&"
+                } Else {
+                    $resource += "$($param.value)=$($PSBoundParameters["$($param.key)"])&"
+                }
+            }
+        }
+        $resource = $resource.TrimEnd('&') # Remove the last ampersand in the string
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByBody') {
+        $Body = $Body
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'All') {
+        $Body = @{} # Empty body for all assets
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByPage') {
+        $Body = @{}
+        $resource = "${resource}?page=${Page}"
     }
 
      Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+}
+Function Get-SDAssetCategory {
+    [cmdletbinding()]
+    Param(
+        [string]$Organization = $authConfig.WorkingOrganization,
+        [string]$Instance = $authConfig.WorkingInstance,
+        [string]$ApiKey = $authConfig.ApiKey
+    )
+    $resource = 'asset_categories'
 
+    Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+}
+Function Get-SDAssetCustomField {
+    [cmdletbinding()]
+    Param(
+        [string]$Organization = $authConfig.WorkingOrganization,
+        [string]$Instance = $authConfig.WorkingInstance,
+        [string]$ApiKey = $authConfig.ApiKey
+    )
+    $resource = 'customfields'
+
+    Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+}
+Function Get-SDAssetSearch{
+    [cmdletbinding(DefaultParameterSetName = 'All')]
+    Param(
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Test, # string (max 255 chars), search assets by any Unique field
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Search, # string (max 255 chars), search assets by any field
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Filter, # string (max 255 chars), use 'my' to show only my owned assets
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$UserId, # integer, show assets checked out by user with id=11 
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$OwnerId, # integer, show assets owned by user with id=12
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$AccountId, # integer, show assets in account with id=1
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$LocationId, # integer, show assets in location with id=2 and all child locations
+        [Parameter(ParameterSetName = 'ByParameter')] [switch]$IsActive, # boolean, show only active (true) or inactive (false) or all (undefined) assets
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$Status, # integer, show only assets with status id=6,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$CategoryId, # integer, show assets with categoryId=111 
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$TypeId, # integer
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$MakeId, # integer
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$ModelId, # integer,
+        [Parameter(ParameterSetName = 'ByParameter')] [switch]$ShowCustomFields, # boolean, show custom_fields (true) or no (false) or all assets 
+        [Parameter(ParameterSetName = 'ByBody')] [hashtable]$Body, # pre-defined body to send to the API.
+        [Parameter(ParameterSetName = 'ByPage')] [int]$Page, # pre-defined body to send to the API.
+        [parameter(ParameterSetName = 'All')] [switch]$All, # Get all assets. Value is ignored. This is the default if no other params are sent.
+
+        [string]$Organization = $authConfig.WorkingOrganization,
+        [string]$Instance = $authConfig.WorkingInstance,
+        [string]$ApiKey = $authConfig.ApiKey
+    )
+    $AssetParams = @{
+        Test        = 'test'
+        Search	    = 'search'
+        Filter	    = 'filter'
+        UserId	    = 'user_id'
+        OwnerId	    = 'owner_id'
+        AccountId	= 'account_id'
+        LocationId	= 'location_id'
+        IsActive	= 'is_active'
+        Status	    = 'status'
+        CategoryId	= 'category_id'
+        TypeId	    = 'type_id'
+        MakeId	    = 'make_id'
+        ModelId	    = 'model_id'
+        ShowCustomFields = 'is_with_custom_fields'
+    }
+
+    # Parse the parameters if provided.  The API docs lied, and none of the body parameters actually work.  You just get it all.
+    $resource = 'assets/search'
+    If ($PSCmdlet.ParameterSetName -eq 'ByParameter') {
+        $Body = @{}
+        ForEach ($param in $AssetParams.GetEnumerator()) {
+            If ($PSBoundParameters.ContainsKey($param.key)) {
+                If ($($PSBoundParameters["$($param.key)"]).IsPresent) {
+                    $Body["$($param.value)"] = $PSBoundParameters["$($param.key)"].IsPresent
+                } Else {
+                    $Body["$($param.value)"] = $PSBoundParameters["$($param.key)"]
+                }
+            }
+        }
+        } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByBody') {
+            $Body = $Body
+        } ElseIf ($PSCmdlet.ParameterSetName -eq 'All') {
+            $Body = @{} # Empty body for all assets
+        } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByPage') {
+            $Body = @{}
+            $resource = "${resource}?page=${Page}"
+    }
+
+    $jsonbody = $Body | ConvertTo-Json
+
+     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey -Body $jsonbody
 }
 Function Get-SDAuthConfig {
     Param(
@@ -177,21 +348,45 @@ Function Get-SDMetadata {
         $resp
     }
 }
-Function Get-SDProject {
+Function Get-SDProfile {
     [cmdletbinding()]
     Param(
-        [parameter(
-            ParameterSetName = 'ByKey'
-        )]
-        [string]$Key,
+        [parameter(ParameterSetName = 'ByID')] [string]$ID,
+
+        [string]$Organization = $authConfig.WorkingOrganization,
+        [string]$Instance = $authConfig.WorkingInstance,
+        [string]$ApiKey = $authConfig.ApiKey
+    )
+    $resource = 'profile'
+    If($PSCmdlet.ParameterSetName -eq 'ByID'){
+        $resource = "$resource/$key"
+    }
+
+    Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+}
+Function Get-SDProject {
+    [cmdletbinding(DefaultParameterSetName = 'All')]
+    Param(
+        [parameter(ParameterSetName = 'ByAccount')] [string]$AccountID,
+        [parameter(ParameterSetName = 'ByTech')] [string]$TechID,
+        [parameter(ParameterSetName = 'HasStatistics')] [switch]$HasStats,
+        [parameter(ParameterSetName = 'ByStatusID')] [string]$StatusID,
+        [parameter(ParameterSetName = 'All')] [switch]$All,
+
         [string]$Organization = $authConfig.WorkingOrganization,
         [string]$Instance = $authConfig.WorkingInstance,
         [string]$ApiKey = $authConfig.ApiKey
     )
     $resource = 'projects'
-    If($PSCmdlet.ParameterSetName -eq 'ByKey'){
-        $resource = "$resource/$key"
-    }
+    If($PSCmdlet.ParameterSetName -eq 'ByAccount'){
+        $resource = "${resource}?account=${AccountID}"
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByTech') {
+        $resource = "${resource}?tech=${TechID}"
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'HasStatistics') {
+        $resource = "${resource}?is_with_statistics=true"
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByStatusID') {
+        $resource = "${resource}?active_status=${StatusID}"
+    } 
 
     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
 }
@@ -218,18 +413,23 @@ Function Get-SDTechs {
     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
 }
 Function Get-SDTicket{
-    [cmdletbinding(DefaultParameterSetName = 'None')]
+    [cmdletbinding(DefaultParameterSetName = 'All')]
     Param(
         [parameter(ParameterSetName = 'ByKey')] [string]$Key,
         [parameter(ParameterSetName = 'ByPage')] [int]$Page,
         [parameter(ParameterSetName = 'ByStatus')] [string]$Status,
+        [parameter(ParameterSetName = 'ByStatus')] [string]$Role,
+        [parameter(ParameterSetName = 'ByDateRange')] [string]$StartDate,
+        [parameter(ParameterSetName = 'ByDateRange')] [string]$EndDate,
         [parameter(ParameterSetName = 'BySearch')] [string]$Search,
+        [parameter(ParameterSetName = 'All')] [switch]$All, # Get all tickets. Value is ignored. This is the default if no other params are sent.
+
         [string]$Organization = $authConfig.WorkingOrganization,
         [string]$Instance = $authConfig.WorkingInstance,
         [string]$ApiKey = $authConfig.ApiKey
     )
 
-    # Validate the key parameter if provided
+    # TODO: Validate the parameters if provided
     $resource = 'tickets'
     If($PSCmdlet.ParameterSetName -eq 'ByKey'){
         $resource = "$resource/$key"
@@ -237,6 +437,17 @@ Function Get-SDTicket{
         $resource = "${resource}?page=${Page}"
     } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByStatus') {
         $resource = "${resource}?status=${Status}"
+        If ($Role) {
+            $resource = "${resource}&role=${Role}"
+        }
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByDateRange') {
+        If ($StartDate -And $EndDate) {
+            $resource = "${resource}?start_date=${StartDate}&end_date=${EndDate}"
+        } ElseIf ($StartDate) {
+            $resource = "${resource}?start_date=${StartDate}"
+        } ElseIf ($EndDate) {
+            $resource = "${resource}?end_date=${EndDate}"
+        }
     } ElseIf ($PSCmdlet.ParameterSetName -eq 'BySearch') {
         $resource = "${resource}?search=${Search}"
     }
@@ -290,24 +501,16 @@ Function New-SDTicket {
         DefaultParameterSetName = 'ByParameter'
     )]
     Param(
-        [Parameter(ParameterSetName = 'ByParameter')]
-        [string]$Status,
-        [Parameter(ParameterSetName = 'ByParameter')]
-        [string]$Subject,
-        [Parameter(ParameterSetName = 'ByParameter')]
-        [string]$FirstPost,
-        [Parameter(ParameterSetName = 'ByParameter')]
-        [int]$Class,
-        [Parameter(ParameterSetName = 'ByParameter')]
-        [int]$Account,
-        [Parameter(ParameterSetName = 'ByParameter')]
-        [int]$Location,
-        [Parameter(ParameterSetName = 'ByParameter')]
-        [int]$User,
-        [Parameter(ParameterSetName = 'ByParameter')]
-        [int]$Tech,
-        [Parameter(ParameterSetName = 'ByBody')]
-        [hashtable]$Body,
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Status,
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Subject,
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$FirstPost,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$Class,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$Account,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$Location,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$User,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$Tech,
+        [Parameter(ParameterSetName = 'ByBody')] [hashtable]$Body,
+        
         [string]$Organization = $authConfig.WorkingOrganization,
         [string]$Instance = $authConfig.WorkingInstance,
         [string]$ApiKey = $authConfig.ApiKey
@@ -602,7 +805,7 @@ Function Invoke-SherpaDeskAPICall {
             Write-Information "total seconds elapsed: $($Timer.elapsed.totalseconds) retrieving page ${page}" -InformationAction Continue
             # Invoke the API call for the next page of results
             # The page number is passed as a query parameter to the API call
-            $currentPageResults = Invoke-RestMethod -Method $Method -Uri "$baseUri/$resource/?page=$page" -Headers $header
+            $currentPageResults = Invoke-RestMethod -Method $Method -Uri "$baseUri/$resource/?page=$page" -Headers $header -Body $Body
             # Flatten the results by adding each object from the current page to $response
             $currentPageResults | ForEach-Object { $response += $_ }
         
