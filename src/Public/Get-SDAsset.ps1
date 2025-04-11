@@ -1,35 +1,67 @@
-<#
-    $body = @{
-    "search": "", // string (max 255 chars), search assets by any field
-    "filter": "my", // string (max 255 chars), use "my" to show only my owned assets
-    "user_id": 11, // integer, show assets checked out by user with id=11 
-    "owner_id": 12, // integer, show assets owned by user with id=12
-    "account_id": 1, // integer, show assets in account with id=1
-    "location_id": 2, // integer, show assets in location with id=2 and all child locations
-    "is_active": true // boolean, show only active (true) or inactive (false) or all (undefined) assets
-    "status": 6 // integer, show only assets with status id=6,
-    "category_id": 111, // integer, show assets with category_id=111 
-    "type_id": 112, // integer
-    "make_id": 113, // integer
-    "model_id": 114, // integer,
-    "is_with_custom_fields": false// boolean, show custom_fields (true) or no (false) or all assets 
-}
-#>
-
 Function Get-SDAsset{
-    [cmdletbinding()]
+    [cmdletbinding(DefaultParameterSetName = 'All')]
     Param(
-        [parameter(ParameterSetName = 'ByKey')] [string]$Key,
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Search, # string (max 255 chars), search assets by any field
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Filter, # string (max 255 chars), use 'my' to show only my owned assets
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$UserId, # integer, show assets checked out by user with id=11 
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$OwnerId, # integer, show assets owned by user with id=12
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$AccountId, # integer, show assets in account with id=1
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$LocationId, # integer, show assets in location with id=2 and all child locations
+        [Parameter(ParameterSetName = 'ByParameter')] [switch]$IsActive, # boolean, show only active (true) or inactive (false) or all (undefined) assets
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$Status, # integer, show only assets with status id=6,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$CategoryId, # integer, show assets with categoryId=111 
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$TypeId, # integer
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$MakeId, # integer
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$ModelId, # integer,
+        [Parameter(ParameterSetName = 'ByParameter')] [switch]$ShowCustomFields, # boolean, show custom_fields (true) or no (false) or all assets 
+        [Parameter(ParameterSetName = 'ByBody')] [hashtable]$Body, # pre-defined body to send to the API.
+        [Parameter(ParameterSetName = 'ByPage')] [int]$Page, # pre-defined body to send to the API.
+        [parameter(ParameterSetName = 'All')] [switch]$All, # Get all assets. Value is ignored. This is the default if no other params are sent.
 
         [string]$Organization = $authConfig.WorkingOrganization,
         [string]$Instance = $authConfig.WorkingInstance,
         [string]$ApiKey = $authConfig.ApiKey
     )
-
-    # Validate the key parameter if provided
-    $resource = 'assets'
-    If($PSCmdlet.ParameterSetName -eq 'ByKey'){
-        $resource = "$resource/$key"
+    $AssetParams = @{
+        Search	    = 'search'
+        Filter	    = 'filter'
+        UserId	    = 'user_id'
+        OwnerId	    = 'owner_id'
+        AccountId	= 'account_id'
+        LocationId	= 'location_id'
+        IsActive	= 'is_active'
+        Status	    = 'status'
+        CategoryId	= 'category_id'
+        TypeId	    = 'type_id'
+        MakeId	    = 'make_id'
+        ModelId	    = 'model_id'
+        ShowCustomFields = 'is_with_custom_fields'
     }
+
+    # Parse the parameters if provided.  The API docs lied, and none of the body parameters actually work.  You just get it all.
+    $resource = 'assets'
+
+    
+    If ($PSCmdlet.ParameterSetName -eq 'ByParameter') {
+        $resource += "?"
+        ForEach ($param in $AssetParams.GetEnumerator()) { 
+            If ($PSBoundParameters.ContainsKey($param.key)) {
+                If ($($PSBoundParameters["$($param.key)"]).IsPresent) {
+                    $resource += "$($param.value)=$($PSBoundParameters["$($param.key)"].IsPresent)&"
+                } Else {
+                    $resource += "$($param.value)=$($PSBoundParameters["$($param.key)"])&"
+                }
+            }
+        }
+        $resource = $resource.TrimEnd('&') # Remove the last ampersand in the string
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByBody') {
+        $Body = $Body
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'All') {
+        $Body = @{} # Empty body for all assets
+    } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByPage') {
+        $Body = @{}
+        $resource = "${resource}?page=${Page}"
+    }
+
      Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
 }
