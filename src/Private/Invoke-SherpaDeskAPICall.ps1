@@ -34,7 +34,7 @@ Function Invoke-SherpaDeskAPICall {
             Write-Information "total seconds elapsed: $($Timer.elapsed.totalseconds) retrieving page ${page}" -InformationAction Continue
             # Invoke the API call for the next page of results
             # The page number is passed as a query parameter to the API call
-            $currentPageResults = Invoke-RestMethod -Method $Method -Uri "$baseUri/$resource/?page=$page" -Headers $header
+            $currentPageResults = Invoke-RestMethod -Method $Method -Uri "$baseUri/$resource/?page=$page" -Headers $header -Body $Body
             # Flatten the results by adding each object from the current page to $response
             $currentPageResults | ForEach-Object { $response += $_ }
         
