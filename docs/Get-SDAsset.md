@@ -1,6 +1,6 @@
 ---
-external help file: SherpaShell-help.xml
-Module Name: SherpaShell
+external help file: PSSherpaDesk-help.xml
+Module Name: PSSherpaDesk
 online version:
 schema: 2.0.0
 ---
@@ -25,9 +25,8 @@ Get-SDAsset currently only can grab all assets.
 
 ### Example 1 - Get all Assets for your organization
 ```powershell
-PS C:\> Get-SDAsset 
+PS C:\> Get-SDAsset
 ```
-
 
 ## PARAMETERS
 
