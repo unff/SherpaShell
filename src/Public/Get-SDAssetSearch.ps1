@@ -1,20 +1,16 @@
 Function Get-SDAssetSearch{
     [cmdletbinding(DefaultParameterSetName = 'All')]
     Param(
-        [Parameter(ParameterSetName = 'ByParameter')] [string]$Test, # string (max 255 chars), search assets by any Unique field
-        [Parameter(ParameterSetName = 'ByParameter')] [string]$Search, # string (max 255 chars), search assets by any field
-        [Parameter(ParameterSetName = 'ByParameter')] [string]$Filter, # string (max 255 chars), use 'my' to show only my owned assets
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$UserId, # integer, show assets checked out by user with id=11 
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$OwnerId, # integer, show assets owned by user with id=12
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$AccountId, # integer, show assets in account with id=1
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$LocationId, # integer, show assets in location with id=2 and all child locations
-        [Parameter(ParameterSetName = 'ByParameter')] [switch]$IsActive, # boolean, show only active (true) or inactive (false) or all (undefined) assets
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$Status, # integer, show only assets with status id=6,
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$CategoryId, # integer, show assets with categoryId=111 
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$TypeId, # integer
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$MakeId, # integer
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$ModelId, # integer,
-        [Parameter(ParameterSetName = 'ByParameter')] [switch]$ShowCustomFields, # boolean, show custom_fields (true) or no (false) or all assets 
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Text, # string (max 255 chars), search assets by any Unique field
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$AccountID, # string (max 255 chars), search assets by any field
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$ExcludeFields, # string (max 255 chars), use 'my' to show only my owned assets
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Query, # integer, show assets checked out by user with id=11 
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$OriginalLimit, # integer, show assets owned by user with id=12
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$Limit, # integer, show assets in account with id=1
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$SortOrder, # boolean, show only active (true) or inactive (false) or all (undefined) assets
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$SortBy, # integer, show only assets with status id=6,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$StartDate, # integer, show assets with categoryId=111 
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$EndDate, # integer
         [Parameter(ParameterSetName = 'ByBody')] [hashtable]$Body, # pre-defined body to send to the API.
         [Parameter(ParameterSetName = 'ByPage')] [int]$Page, # pre-defined body to send to the API.
         [parameter(ParameterSetName = 'All')] [switch]$All, # Get all assets. Value is ignored. This is the default if no other params are sent.
@@ -24,20 +20,17 @@ Function Get-SDAssetSearch{
         [string]$ApiKey = $authConfig.ApiKey
     )
     $AssetParams = @{
-        Test        = 'test'
-        Search	    = 'search'
-        Filter	    = 'filter'
-        UserId	    = 'user_id'
-        OwnerId	    = 'owner_id'
-        AccountId	= 'account_id'
-        LocationId	= 'location_id'
-        IsActive	= 'is_active'
-        Status	    = 'status'
-        CategoryId	= 'category_id'
-        TypeId	    = 'type_id'
-        MakeId	    = 'make_id'
-        ModelId	    = 'model_id'
-        ShowCustomFields = 'is_with_custom_fields'
+        Text                = 'text'
+        AccountId	        = 'account_id'
+        ExcludeFields       = 'exclude_fields'
+        Query	            = 'query'
+        OriginalLimit       = 'original_limit'
+        Limit	            = 'limit'
+        Page	            = 'page'
+        SortOrder	        = 'sort_order'
+        SortBy	            = 'sort_by'
+        StartDate	        = 'start_date'
+        EndDate	            = 'end_date'
     }
 
     # Parse the parameters if provided.  The API docs lied, and none of the body parameters actually work.  You just get it all.
