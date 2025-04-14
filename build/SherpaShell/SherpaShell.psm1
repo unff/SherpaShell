@@ -281,6 +281,7 @@ Function Get-SDAssetSearch{
     # Parse the parameters if provided.  The API docs lied, and none of the body parameters actually work.  You just get it all.
     $resource = 'assets/search'
     If ($PSCmdlet.ParameterSetName -eq 'ByParameter') {
+        $resource += '?c=1'
         $Body = @{}
         ForEach ($param in $AssetParams.GetEnumerator()) {
             If ($PSBoundParameters.ContainsKey($param.key)) {
@@ -543,7 +544,7 @@ Function Get-SDTicket{
             $resource = "${resource}?end_date=${EndDate}"
         }
     } ElseIf ($PSCmdlet.ParameterSetName -eq 'BySearch') {
-        $resource = "${resource}?search=${Search}"
+        $resource = "${resource}?search=${Search}&c=1"
     }
 
      Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey

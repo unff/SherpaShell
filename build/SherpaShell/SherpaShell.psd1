@@ -73,7 +73,7 @@ FunctionsToExport = 'Get-SDAccount', 'Get-SDAccountStatistics', 'Get-SDActivity'
                'Get-SDAPIKey', 'Get-SDArticle', 'Get-SDAsset', 'Get-SDAssetCategory', 
                'Get-SDAssetCustomField', 'Get-SDAssetMakes', 'Get-SDAssetModels', 
                'Get-SDAssetSearch', 'Get-SDAssetStatuses', 'Get-SDAssetTypes', 
-               'Get-SDAuthConfig', 'Get-SDClasses', 'Get-SDConfig', 'Get-SDInvoice', 
+               'Get-SDAuthConfig', 'Get-SDClass', 'Get-SDConfig', 'Get-SDInvoice', 
                'Get-SDMetadata', 'Get-SDProfile', 'Get-SDProject', 'Get-SDTaskTypes', 
                'Get-SDTechs', 'Get-SDTicket', 'Get-SDTime', 'Get-SDTodo', 'Get-SDUser', 
                'New-SDTicket', 'New-SDUser', 'Save-SDAuthConfig', 'Set-SDAsset', 
