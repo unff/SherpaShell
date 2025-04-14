@@ -15,7 +15,7 @@ Function Get-SDAsset{
         [Parameter(ParameterSetName = 'ByParameter')] [int]$ModelId, # integer,
         [Parameter(ParameterSetName = 'ByParameter')] [switch]$ShowCustomFields, # boolean, show custom_fields (true) or no (false) or all assets 
         [Parameter(ParameterSetName = 'ByBody')] [hashtable]$Body, # pre-defined body to send to the API.
-        [Parameter(ParameterSetName = 'ByPage')] [int]$Page, # pre-defined body to send to the API.
+        [Parameter(ParameterSetName = 'ByPage')] [int]$Page, # page number to retrieve. Default is 0
         [parameter(ParameterSetName = 'All')] [switch]$All, # Get all assets. Value is ignored. This is the default if no other params are sent.
 
         [string]$Organization = $authConfig.WorkingOrganization,
@@ -38,7 +38,7 @@ Function Get-SDAsset{
         ShowCustomFields = 'is_with_custom_fields'
     }
 
-    # Parse the parameters if provided.  The API docs lied, and none of the body parameters actually work.  You just get it all.
+    # Parse the parameters if provided.  The API docs lie, and the API does not support all of the parameters listed in the docs.
     $resource = 'assets'
 
     
@@ -63,5 +63,7 @@ Function Get-SDAsset{
         $resource = "${resource}?page=${Page}"
     }
 
-     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+    $jsonbody = $Body | ConvertTo-Json -Depth 10 # Convert the body to JSON format
+
+     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey -Body $jsonbody
 }

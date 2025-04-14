@@ -1,13 +1,18 @@
-[![Build Status](https://theposhwolf.visualstudio.com/PSSherpaDesk/_apis/build/status/Publish?branchName=master)](https://theposhwolf.visualstudio.com/PSSherpaDesk/_build/latest?definitionId=7&branchName=master)
 
-# PSSherpaDesk
+
+# SherpaShell
+
+### This module is a fork of [PSSherpaDesk by Anthony Howell](https://github.com/HowellIT/PSSherpaDesk).
+
+### This is a work in progress. Even if I've forgotten about it. Several documented calls in the SherpaDesk APi docs to not work as described.  YRMV.
 
 This module is designed to work with SherpaDesk's API (https://sherpadesk.com)
 
-Their API docs:
+SherpaDesk API docs:
 
  - https://github.com/sherpadesk/api/wiki
  - https://documenter.getpostman.com/view/4454237/apisherpadeskcom-playground/RW8AooQg
+ - http://api.sherpadesk.com/metadata
 
 This is not endorsed by Sherpa Desk, I've developed it because I use the product and prefer to automate what I can.
 
@@ -28,7 +33,7 @@ Install-Module PSSherpaDesk
 Download or clone this repo and:
 
 ```PowerShell
-Import-Module $ModulePath\build\PSSherpaDesk
+Import-Module $ModulePath\build\SherpaShell
 ```
 To be able to use this module, you must already have a Sherpa Desk account.
 
@@ -49,6 +54,7 @@ Sherpa Desk requires an Organization and Instance to be sent with each request, 
 ```PowerShell
 Get-SDMetadata
 ```
+If you have more than one instance, the cmdlet will ask you to choose the instance to use
 
 This will also add these to the module-scoped AuthConfig variable for the other cmdlets to access. It currently sets the first Organization and the first Instance as the working reference points.
 
@@ -56,17 +62,30 @@ This will also add these to the module-scoped AuthConfig variable for the other 
 
 ## How to query
 
-To retrieve all data:
+To retrieve all ticket data:
 
 ```PowerShell
 Get-SDTicket
 ```
-
-To get a single object:
+To retrieve all asset data:
 
 ```PowerShell
-Get-SDTicket -Key <ticket key or ID>
+Get-SDAsset
 ```
+
+
+To get a single ticket:
+
+```PowerShell
+Get-SDTicket -ID <ticket ID>
+```
+
+To get a specific asset:
+
+```PowerShell
+Get-SDAssetSearch -Text <text of any unique field>
+```
+
 
 ## How to set data
 

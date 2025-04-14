@@ -1,7 +1,7 @@
 Function Get-SDTicket{
     [cmdletbinding(DefaultParameterSetName = 'All')]
     Param(
-        [parameter(ParameterSetName = 'ByKey')] [string]$Key,
+        [parameter(ParameterSetName = 'ByID')] [string]$ID,
         [parameter(ParameterSetName = 'ByPage')] [int]$Page,
         [parameter(ParameterSetName = 'ByStatus')] [string]$Status,
         [parameter(ParameterSetName = 'ByStatus')] [string]$Role,
@@ -18,7 +18,7 @@ Function Get-SDTicket{
     # TODO: Validate the parameters if provided
     $resource = 'tickets'
     If($PSCmdlet.ParameterSetName -eq 'ByKey'){
-        $resource = "$resource/$key"
+        $resource = "$resource/$ID"
     } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByPage') {
         $resource = "${resource}?page=${Page}"
     } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByStatus') {
