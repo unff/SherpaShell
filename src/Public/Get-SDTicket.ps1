@@ -35,7 +35,7 @@ Function Get-SDTicket{
             $resource = "${resource}?end_date=${EndDate}"
         }
     } ElseIf ($PSCmdlet.ParameterSetName -eq 'BySearch') {
-        $resource = "${resource}?search=${Search}"
+        $resource = "${resource}?search=${Search}&c=1"
     }
 
      Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
