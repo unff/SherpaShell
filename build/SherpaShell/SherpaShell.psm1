@@ -149,7 +149,7 @@ Function Get-SDAsset{
         [Parameter(ParameterSetName = 'ByParameter')] [int]$ModelId, # integer,
         [Parameter(ParameterSetName = 'ByParameter')] [switch]$ShowCustomFields, # boolean, show custom_fields (true) or no (false) or all assets 
         [Parameter(ParameterSetName = 'ByBody')] [hashtable]$Body, # pre-defined body to send to the API.
-        [Parameter(ParameterSetName = 'ByPage')] [int]$Page, # pre-defined body to send to the API.
+        [Parameter(ParameterSetName = 'ByPage')] [int]$Page, # page number to retrieve. Default is 0
         [parameter(ParameterSetName = 'All')] [switch]$All, # Get all assets. Value is ignored. This is the default if no other params are sent.
 
         [string]$Organization = $authConfig.WorkingOrganization,
@@ -172,7 +172,7 @@ Function Get-SDAsset{
         ShowCustomFields = 'is_with_custom_fields'
     }
 
-    # Parse the parameters if provided.  The API docs lied, and none of the body parameters actually work.  You just get it all.
+    # Parse the parameters if provided.  The API docs lie, and the API does not support all of the parameters listed in the docs.
     $resource = 'assets'
 
     
@@ -197,7 +197,9 @@ Function Get-SDAsset{
         $resource = "${resource}?page=${Page}"
     }
 
-     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
+    $jsonbody = $Body | ConvertTo-Json -Depth 10 # Convert the body to JSON format
+
+     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey -Body $jsonbody
 }
 Function Get-SDAssetCategory {
     [cmdletbinding()]
@@ -510,7 +512,7 @@ Function Get-SDTechs {
 Function Get-SDTicket{
     [cmdletbinding(DefaultParameterSetName = 'All')]
     Param(
-        [parameter(ParameterSetName = 'ByKey')] [string]$Key,
+        [parameter(ParameterSetName = 'ByID')] [string]$ID,
         [parameter(ParameterSetName = 'ByPage')] [int]$Page,
         [parameter(ParameterSetName = 'ByStatus')] [string]$Status,
         [parameter(ParameterSetName = 'ByStatus')] [string]$Role,
@@ -527,7 +529,7 @@ Function Get-SDTicket{
     # TODO: Validate the parameters if provided
     $resource = 'tickets'
     If($PSCmdlet.ParameterSetName -eq 'ByKey'){
-        $resource = "$resource/$key"
+        $resource = "$resource/$ID"
     } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByPage') {
         $resource = "${resource}?page=${Page}"
     } ElseIf ($PSCmdlet.ParameterSetName -eq 'ByStatus') {
@@ -591,7 +593,7 @@ Function Get-SDUser {
 
     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
 }
-Function New-SDTicket {
+Function Add-SDTicket {
     [cmdletbinding(
         DefaultParameterSetName = 'ByParameter'
     )]
@@ -638,7 +640,7 @@ Function New-SDTicket {
 
     Invoke-SherpaDeskAPICall -Method Post -Resource $resource -Organization $Organization -Instance $Instance -ApiKey $ApiKey -Body $jsonbody
 }
-Function New-SDUser {
+Function Add-SDUser {
     Param(
         [Parameter(
             ParameterSetName = 'ByParameter',
