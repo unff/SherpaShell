@@ -41,7 +41,7 @@ Task Analyze -depends Build {
     #still need to get my PSScriptANalyzer going
 }
 Task Deploy -depends Test,Analyze {
-    #Get-Module PSSherpaDesk
+    #Get-Module SherpaShell
     Invoke-PSDeploy -Path $PSScriptRoot -Force
 }
 Task Clean {

@@ -29,6 +29,6 @@
 ```
 
 ```powershell
-> Get-Module PSSherpaDesk
+> Get-Module SherpaShell
 
 ```

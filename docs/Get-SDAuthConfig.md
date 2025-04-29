@@ -1,6 +1,6 @@
 ---
-external help file: PSSherpaDesk-help.xml
-Module Name: PSSherpaDesk
+external help file: SherpaShell-help.xml
+Module Name: SherpaShell
 online version:
 schema: 2.0.0
 ---

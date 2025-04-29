@@ -69,15 +69,16 @@ Description = 'PowerShell module for interacting with the SherpaDesk API'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Get-SDAccount', 'Get-SDAccountStatistics', 'Get-SDActivity', 
-               'Get-SDAPIKey', 'Get-SDArticle', 'Get-SDAsset', 'Get-SDAssetCategory', 
+FunctionsToExport = 'Add-SDAsset', 'Add-SDTicket', 'Add-SDUser', 'Get-SDAccount', 
+               'Get-SDAccountStatistics', 'Get-SDActivity', 'Get-SDAPIKey', 
+               'Get-SDArticle', 'Get-SDAsset', 'Get-SDAssetCategory', 
                'Get-SDAssetCustomField', 'Get-SDAssetMakes', 'Get-SDAssetModels', 
                'Get-SDAssetSearch', 'Get-SDAssetStatuses', 'Get-SDAssetTypes', 
                'Get-SDAuthConfig', 'Get-SDClass', 'Get-SDConfig', 'Get-SDInvoice', 
                'Get-SDMetadata', 'Get-SDProfile', 'Get-SDProject', 'Get-SDTaskTypes', 
                'Get-SDTechs', 'Get-SDTicket', 'Get-SDTime', 'Get-SDTodo', 'Get-SDUser', 
-               'Add-SDTicket', 'Add-SDUser', 'Save-SDAuthConfig', 'Set-SDAsset', 
-               'Set-SDTicket'
+               'Remove-SDAsset', 'Remove-SDTicket', 'Remove-SDUser', 
+               'Save-SDAuthConfig', 'Set-SDAsset', 'Set-SDTicket'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()

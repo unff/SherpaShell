@@ -27,7 +27,7 @@ PRs welcome! Check the [CONTRIBUTING.md](https://github.com/HowellIT/PSSherpaDes
 This module is now available in the PowerShell Gallery:
 
 ```PowerShell
-Install-Module PSSherpaDesk
+Install-Module SherpaShell
 ```
 
 Download or clone this repo and:

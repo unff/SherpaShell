@@ -13,5 +13,5 @@ Function Get-SDSavePath {
         # Windows PS
         $saveDir = $env:USERPROFILE
     }
-    "$saveDir\.pssherpadesk"
+    "$saveDir\.sherpashell"
 }

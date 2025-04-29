@@ -1,3 +1,109 @@
+Function Add-SDTicket {
+    [cmdletbinding(
+        DefaultParameterSetName = 'ByParameter'
+    )]
+    Param(
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Status,
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$Subject,
+        [Parameter(ParameterSetName = 'ByParameter')] [string]$FirstPost,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$Class,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$Account,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$Location,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$User,
+        [Parameter(ParameterSetName = 'ByParameter')] [int]$Tech,
+        [Parameter(ParameterSetName = 'ByBody')] [hashtable]$Body,
+        
+        [string]$Organization = $authConfig.WorkingOrganization,
+        [string]$Instance = $authConfig.WorkingInstance,
+        [string]$ApiKey = $authConfig.ApiKey
+    )
+    $NewTicketParams = @{
+        Status    = 'status'
+        Subject   = 'subject'
+        FirstPost = 'initial_post'
+        Class     = 'class_id'
+        Account   = 'account_id'
+        Location  = 'location_id'
+        User      = 'user_id'
+        Tech      = 'tech_id'
+    }
+
+    $resource = "tickets"
+    
+    If ($PSCmdlet.ParameterSetName -eq 'ByParameter') {
+        $body = @{}
+        ForEach ($param in $NewTicketParams.GetEnumerator()) {
+            If ($PSBoundParameters.ContainsKey($param.key)) {
+                $body["$($param.value)"] = $PSBoundParameters["$($param.key)"]
+            }
+        }
+    }
+
+    $jsonbody = $body | ConvertTo-Json
+
+    Write-Verbose $jsonbody
+
+    Invoke-SherpaDeskAPICall -Method Post -Resource $resource -Organization $Organization -Instance $Instance -ApiKey $ApiKey -Body $jsonbody
+}
+Function Add-SDUser {
+    Param(
+        [Parameter(
+            ParameterSetName = 'ByParameter',
+            Mandatory = $true
+        )]
+        [string]$FirstName,
+        [Parameter(
+            ParameterSetName = 'ByParameter',
+            Mandatory = $true
+        )]
+        [string]$LastName,
+        [Parameter(
+            ParameterSetName = 'ByParameter',
+            Mandatory = $true
+        )]
+        [string]$Email,
+        [Parameter(
+            ParameterSetName = 'ByParameter',
+            Mandatory = $true
+        )]
+        [int]$Account,
+        [Parameter(
+            ParameterSetName = 'ByParameter'
+        )]
+        [int]$Location,
+        [Parameter(
+            ParameterSetName = 'ByBody'
+        )]
+        [hashtable]$Body,
+        [string]$Organization = $authConfig.WorkingOrganization,
+        [string]$Instance = $authConfig.WorkingInstance,
+        [string]$ApiKey = $authConfig.ApiKey
+    )
+    $NewUserParams = @{
+        FirstName = 'firstname'
+        LastName = 'lastname'
+        Email = 'email'
+        Account = 'account'
+        Location = 'location'
+    }
+
+    $resource = 'users'
+
+    If($PSCmdlet.ParameterSetName -eq 'ByParameter'){
+        $body = @{}
+        ForEach($param in $NewUserParams.GetEnumerator()){
+            If($PSBoundParameters.ContainsKey($param.key)){
+                $body["$($param.value)"] = $PSBoundParameters["$($param.key)"]
+            }
+        }
+    }
+
+    $jsonbody = $body | ConvertTo-Json
+
+    Write-Verbose $jsonbody
+
+    Invoke-SherpaDeskAPICall -Method Post -Resource $resource -Organization $Organization -Instance $Instance -ApiKey $ApiKey -Body $jsonbody
+}
 Function Get-SDAccount{
     [cmdletbinding(DefaultParameterSetName = 'All')]
     Param(
@@ -555,9 +661,20 @@ Function Get-SDTicket{
 Function Get-SDTime {
     [cmdletbinding()]
     Param(
+        [switch]$Recent,
+        [switch]$UnlinkedFreshBooks,
+        [switch]$LinkedFreshBooks,
+        [switch]$Invoiced,
+        [switch]$Uninvoiced,
+        [switch]$UnlinkedQuickBooks,
+        [switch]$LinkedQuickBooks,
+        [switch]$Hidden,
+        [switch]$DoNotInvoice,
         [string]$Account,
         [string]$Tech,
         [string]$Project,
+        [string]$TicketTimeID,
+        [string]$ProjectTimeID,
         [string]$Organization = $authConfig.WorkingOrganization,
         [string]$Instance = $authConfig.WorkingInstance,
         [string]$ApiKey = $authConfig.ApiKey
@@ -592,112 +709,6 @@ Function Get-SDUser {
     $resource = 'users'
 
     Invoke-SherpaDeskAPICall -Resource $resource -Method Get -Organization $Organization -Instance $Instance -ApiKey $ApiKey
-}
-Function Add-SDTicket {
-    [cmdletbinding(
-        DefaultParameterSetName = 'ByParameter'
-    )]
-    Param(
-        [Parameter(ParameterSetName = 'ByParameter')] [string]$Status,
-        [Parameter(ParameterSetName = 'ByParameter')] [string]$Subject,
-        [Parameter(ParameterSetName = 'ByParameter')] [string]$FirstPost,
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$Class,
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$Account,
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$Location,
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$User,
-        [Parameter(ParameterSetName = 'ByParameter')] [int]$Tech,
-        [Parameter(ParameterSetName = 'ByBody')] [hashtable]$Body,
-        
-        [string]$Organization = $authConfig.WorkingOrganization,
-        [string]$Instance = $authConfig.WorkingInstance,
-        [string]$ApiKey = $authConfig.ApiKey
-    )
-    $NewTicketParams = @{
-        Status    = 'status'
-        Subject   = 'subject'
-        FirstPost = 'initial_post'
-        Class     = 'class_id'
-        Account   = 'account_id'
-        Location  = 'location_id'
-        User      = 'user_id'
-        Tech      = 'tech_id'
-    }
-
-    $resource = "tickets"
-    
-    If ($PSCmdlet.ParameterSetName -eq 'ByParameter') {
-        $body = @{}
-        ForEach ($param in $NewTicketParams.GetEnumerator()) {
-            If ($PSBoundParameters.ContainsKey($param.key)) {
-                $body["$($param.value)"] = $PSBoundParameters["$($param.key)"]
-            }
-        }
-    }
-
-    $jsonbody = $body | ConvertTo-Json
-
-    Write-Verbose $jsonbody
-
-    Invoke-SherpaDeskAPICall -Method Post -Resource $resource -Organization $Organization -Instance $Instance -ApiKey $ApiKey -Body $jsonbody
-}
-Function Add-SDUser {
-    Param(
-        [Parameter(
-            ParameterSetName = 'ByParameter',
-            Mandatory = $true
-        )]
-        [string]$FirstName,
-        [Parameter(
-            ParameterSetName = 'ByParameter',
-            Mandatory = $true
-        )]
-        [string]$LastName,
-        [Parameter(
-            ParameterSetName = 'ByParameter',
-            Mandatory = $true
-        )]
-        [string]$Email,
-        [Parameter(
-            ParameterSetName = 'ByParameter',
-            Mandatory = $true
-        )]
-        [int]$Account,
-        [Parameter(
-            ParameterSetName = 'ByParameter'
-        )]
-        [int]$Location,
-        [Parameter(
-            ParameterSetName = 'ByBody'
-        )]
-        [hashtable]$Body,
-        [string]$Organization = $authConfig.WorkingOrganization,
-        [string]$Instance = $authConfig.WorkingInstance,
-        [string]$ApiKey = $authConfig.ApiKey
-    )
-    $NewUserParams = @{
-        FirstName = 'firstname'
-        LastName = 'lastname'
-        Email = 'email'
-        Account = 'account'
-        Location = 'location'
-    }
-
-    $resource = 'users'
-
-    If($PSCmdlet.ParameterSetName -eq 'ByParameter'){
-        $body = @{}
-        ForEach($param in $NewUserParams.GetEnumerator()){
-            If($PSBoundParameters.ContainsKey($param.key)){
-                $body["$($param.value)"] = $PSBoundParameters["$($param.key)"]
-            }
-        }
-    }
-
-    $jsonbody = $body | ConvertTo-Json
-
-    Write-Verbose $jsonbody
-
-    Invoke-SherpaDeskAPICall -Method Post -Resource $resource -Organization $Organization -Instance $Instance -ApiKey $ApiKey -Body $jsonbody
 }
 Function Save-SDAuthConfig {
     [cmdletbinding(
@@ -864,7 +875,7 @@ Function Get-SDSavePath {
         # Windows PS
         $saveDir = $env:USERPROFILE
     }
-    "$saveDir\.pssherpadesk"
+    "$saveDir\.sherpashell"
 }
 Function Invoke-SherpaDeskAPICall {
     Param(
