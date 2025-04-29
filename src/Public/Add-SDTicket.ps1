@@ -1,4 +1,4 @@
-Function New-SDTicket {
+Function Add-SDTicket {
     [cmdletbinding(
         DefaultParameterSetName = 'ByParameter'
     )]

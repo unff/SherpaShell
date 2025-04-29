@@ -1,4 +1,4 @@
-Function New-SDUser {
+Function Add-SDUser {
     Param(
         [Parameter(
             ParameterSetName = 'ByParameter',
