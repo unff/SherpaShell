@@ -1,12 +1,14 @@
-Describe 'Tickets' -Tag 'Tickets' {
+BeforeAll {
     $guid = New-Guid
     $ticketParams = @{
         Status = 'Open'
         Subject = "Test ticket from Pester $guid"
     }
-    $newTicket = New-SDTicket @ticketParams
+}
+Describe 'Tickets' -Tag 'Tickets' {
     Context 'New' {
-        It 'New-SDTicket should create a ticket' {
+        It 'Add-SDTicket should create a ticket' {
+            $newTicket = Add-SDTicket @ticketParams
             $newTicket | Should -Not -BeNullOrEmpty
         }
     }

@@ -1,4 +1,4 @@
-InModuleScope -ModuleName PSSherpaDesk {
+InModuleScope -ModuleName SherpaShell {
     Describe 'AuthConfig' -Tag 'Auth' {
         Context 'Get' {
             It 'Get-SDAuthConfig should return data' {

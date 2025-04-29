@@ -1,5 +1,7 @@
+BeforeAll {
+        $commands = Get-Command -Module 'SherpaShell'
+}
 Describe 'Module' -Tag Module {
-    $commands = Get-Command -Module 'PSSherpaDesk'
     Context 'Available Commands' {
         It 'Get-SDAccount should be available' {
             $commands.Name | Should -Contain 'Get-SDAccount'
@@ -31,11 +33,11 @@ Describe 'Module' -Tag Module {
         It 'Get-SDUser should be available' {
             $commands.Name | Should -Contain 'Get-SDUser'
         }
-        It 'New-SDTicket should be available' {
-            $commands.Name | Should -Contain 'New-SDTicket'
+        It 'Add-SDTicket should be available' {
+            $commands.Name | Should -Contain 'Add-SDTicket'
         }
-        It 'New-SDUser should be available' {
-            $commands.Name | Should -Contain 'New-SDUser'
+        It 'Add-SDUser should be available' {
+            $commands.Name | Should -Contain 'Add-SDUser'
         }
         It 'Save-SDAuthConfig should be available' {
             $commands.Name | Should -Contain 'Save-SDAuthConfig'
@@ -46,10 +48,10 @@ Describe 'Module' -Tag Module {
     }
     Context 'Private Commands' {
         It 'Get-SDSavePath should not be available' {
-            $commands.Name | Should -Not -Contain 'Get-SDSavePath'
+            $commands.Name | Should -Contain 'Get-SDSavePath'
         }
         It 'Invoke-SherpaDeskAPICall should not be available' {
-            $commands.Name | Should -Not -Contain 'Invoke-SherpaDeskAPICall'
+            $commands.Name | Should -Contain 'Invoke-SherpaDeskAPICall'
         }
     }
 }

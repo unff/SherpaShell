@@ -1,4 +1,4 @@
-Describe 'Users' -Tag 'Users' {
+BeforeAll {
     $guid = (New-Guid) -replace '-',''
     $userParams = @{
         FirstName = 'Pester'
@@ -6,13 +6,15 @@ Describe 'Users' -Tag 'Users' {
         Account = '-1'
         Email = "$guid@howell-it.com"
     }
-    $user = New-SDUser @userParams
+}
+Describe 'Users' -Tag 'Users' {
     Context 'New' {
-        It 'New-SDUser should create a user' {
+        It 'Add-SDUser should create a user' {
+            $user = Add-SDUser @userParams
             $user | Should -Not -BeNullOrEmpty
         }
-        It 'New-SDUser should throw an error on duplicate user' {
-            {New-SDUser @userParams} | Should -Throw
+        It 'Add-SDUser should throw an error on duplicate user' {
+            {Add-SDUser @userParams} | Should -Throw
         }
     }
     Context 'Get' {
