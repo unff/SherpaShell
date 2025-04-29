@@ -110,5 +110,5 @@ Set-SDTicket -key <ticket key or ID> -Body $body
 To create a new user:
 
 ```PowerShell
-New-SDUser -FirstName 'Anthony' -LastName 'Howell' -Email 'anthony@howell-it.com'
+Add-SDUser -FirstName 'Anthony' -LastName 'Howell' -Email 'anthony@howell-it.com'
 ```

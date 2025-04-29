@@ -5,23 +5,23 @@ online version:
 schema: 2.0.0
 ---
 
-# New-SDTicket
+# Add-SDUser
 
 ## SYNOPSIS
 {{Fill in the Synopsis}}
 
 ## SYNTAX
 
-### ByParameter (Default)
+### ByParameter
 ```
-New-SDTicket [-Status <String>] [-Subject <String>] [-FirstPost <String>] [-Class <Int32>] [-Account <Int32>]
- [-Location <Int32>] [-User <Int32>] [-Tech <Int32>] [-Organization <String>] [-Instance <String>]
- [-ApiKey <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+Add-SDUser -FirstName <String> -LastName <String> -Email <String> -Account <Int32> [-Location <Int32>]
+ [-Organization <String>] [-Instance <String>] [-ApiKey <String>] [-ProgressAction <ActionPreference>]
+ [<CommonParameters>]
 ```
 
 ### ByBody
 ```
-New-SDTicket [-Body <Hashtable>] [-Organization <String>] [-Instance <String>] [-ApiKey <String>]
+Add-SDUser [-Body <Hashtable>] [-Organization <String>] [-Instance <String>] [-ApiKey <String>]
  [-ProgressAction <ActionPreference>] [<CommonParameters>]
 ```
 
@@ -47,7 +47,7 @@ Type: Int32
 Parameter Sets: ByParameter
 Aliases:
 
-Required: False
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -87,30 +87,30 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Class
-{{Fill Class Description}}
-
-```yaml
-Type: Int32
-Parameter Sets: ByParameter
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -FirstPost
-{{Fill FirstPost Description}}
+### -Email
+{{Fill Email Description}}
 
 ```yaml
 Type: String
 Parameter Sets: ByParameter
 Aliases:
 
-Required: False
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -FirstName
+{{Fill FirstName Description}}
+
+```yaml
+Type: String
+Parameter Sets: ByParameter
+Aliases:
+
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -129,6 +129,21 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -LastName
+{{Fill LastName Description}}
+
+```yaml
+Type: String
+Parameter Sets: ByParameter
+Aliases:
+
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -159,66 +174,6 @@ Your SherpaDesk Organization. This is passed automatically after:
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Status
-{{Fill Status Description}}
-
-```yaml
-Type: String
-Parameter Sets: ByParameter
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Subject
-{{Fill Subject Description}}
-
-```yaml
-Type: String
-Parameter Sets: ByParameter
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Tech
-{{Fill Tech Description}}
-
-```yaml
-Type: Int32
-Parameter Sets: ByParameter
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -User
-{{Fill User Description}}
-
-```yaml
-Type: Int32
-Parameter Sets: ByParameter
 Aliases:
 
 Required: False
