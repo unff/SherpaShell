@@ -1,7 +1,7 @@
-$srcPath = "$PSScriptRoot\src"
-$buildPath = "$PSScriptRoot\build"
-$docPath = "$PSScriptRoot\docs"
-$testPath = "$PSScriptRoot\tests"
+$srcPath = "$PSScriptRoot\Powershell\src"
+$buildPath = "$PSScriptRoot\Powershell\build"
+$docPath = "$PSScriptRoot\Powershell\docs"
+$testPath = "$PSScriptRoot\Powershell\tests"
 $moduleName = "SherpaShell"
 $modulePath = "$buildPath\$moduleName"
 $author = 'Anthony Howell, JC Ryan'
