@@ -20,7 +20,6 @@ This module mostly just retrieves some of the data so far, but more is being add
 
 This doc is just a standin until I update all the help for each cmdlet.
 
-PRs welcome! Check the [CONTRIBUTING.md](https://github.com/HowellIT/PSSherpaDesk/blob/master/.github/CONTRIBUTING.md) for more info.
 
 ## How to set up
 
